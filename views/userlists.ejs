@@ -1,0 +1,142 @@
+<%- include('partials/header'); -%>
+
+<div class="container">
+  <div class="d-flex mt-3">
+    <a href="/editusers" button type="submit" class="btn btn-primary">Edit Users</a>
+  </div>
+
+  <!-- rest of the code -->
+</div>
+
+<div class="container">
+  <h2>List of Active Users</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Role</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% users.filter(user => user.status === 'active' && user.isUserDeleted !== 'true').forEach(user => { %>
+        <tr>
+          <td><%= user.email %></td>
+          <td><%= user.password %></td>
+          <td><%= user.role %></td>
+          <td><%= user.status %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <h2></h2>
+  <h2>List of Disabled Users</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Role</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% users.filter(user => user.status === 'disabled' && user.isUserDeleted !== 'true').forEach(user => { %>
+        <tr>
+          <td><%= user.email %></td>
+          <td><%= user.password %></td>
+          <td><%= user.role %></td>
+          <td><%= user.status %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('partials/footer'); -%>
+
+
+<style>
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 50px;
+  }
+
+  h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  table {
+    width: 80%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid black;
+  }
+
+  th {
+    background-color: #f2f2f2;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  .btn {
+    color: white;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+  }
+
+  .btn-primary:focus,
+  .btn-primary.focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+  }
+
+  .btn-primary:active,
+  .btn-primary.active {
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+  .container1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 50px;
+}
+
+.d-flex {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+.btn-primary {
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+</style>
