@@ -44,13 +44,16 @@
         if (data.errors){
             emailError.textContent = data.errors.email;
             passwordError.textContent = data.errors.password;}
-        if (data.userLogin){
-            if (data.role === 'admin') {
-                location.assign('/adminsmoothies');
-            } else {
-                location.assign('/');
-            }
-        }
+            if (data.userLogin) {
+  if (data.role === 'admin') {
+    location.assign('/adminsmoothies');
+  } else if (data.role === 'seller') {
+    location.assign('/sellerui');
+  } else {
+    location.assign('/');
+  }
+}
+
         }catch(err){
             console.log(err);
         }

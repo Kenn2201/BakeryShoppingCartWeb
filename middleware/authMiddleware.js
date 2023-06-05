@@ -3,22 +3,22 @@ const {secret} = require('../controllers/authControllers');
 const userModel = require('../models/User');
 
 const requireAuth = (req, res, next) => {
-
   const token = req.cookies.jwt;
 
-  // check json web token exists & is verified
+  // Check if the JWT exists
   if (token) {
     jwt.verify(token, secret, (err, decodedToken) => {
       if (err) {
         console.log(err.message);
-        res.redirect('/login');
+        res.redirect('/login'); // Redirect to login page if the token is invalid or expired
       } else {
-        console.log(decodedToken);
-        next();
+        // Populate req.user with the decoded token data
+        req.user = decodedToken;
+        next(); // Call the next middleware or controller function
       }
     });
   } else {
-    res.redirect('/login');
+    res.redirect('/login'); // Redirect to login page if the token is missing
   }
 };
 

@@ -1,0 +1,180 @@
+<%- include('partials/header'); -%>
+
+<div class="container">
+  <div class="d-flex">
+    <a href="/sellerproductadd" class="btn btn-primary">Add Products</a>
+  </div>
+  <h2>List of Products</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>ID</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Units</th> <!-- Add this column header -->
+        <th>Image</th>
+        <th>Edit Product</th>
+        <th>Delete Product</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% products.forEach(product => { %>
+        <tr>
+          <td><%= product.product_name %></td>
+          <td><%= product.product_id %></td>
+          <td><%= product.description %></td>
+          <td class="price">₱ <%= product.price %></td>
+          <td><%= product.units %></td> <!-- Add this table cell to display the units -->
+          <td>
+            <img class="product-image" src="data:<%= product.image.contentType %>;base64,<%= product.image.data.toString('base64') %>" alt="Product Image">
+          </td>
+          <td>
+            <a href="/edit-product/<%= product._id %>" class="btn btn-primary">Edit</a>
+          </td>
+          <td>
+            <a href="#" class="btn btn-primary2" onclick="event.preventDefault(); deleteProduct('<%= product._id %>')">Delete</a>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+
+<%- include('partials/footer'); -%>
+
+
+
+
+<script>
+  function deleteProduct(productId) {
+    // Send a POST request using fetch or any other AJAX method
+    fetch(`/delete-product/${productId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response data as needed
+        console.log(data);
+        // Refresh the page to "/sellerproductlists"
+        window.location.href = "/selleruiproductlists";
+      })
+      .catch(error => {
+        // Handle any errors that occurred during the request
+        console.error(error);
+      });
+  }
+</script>
+
+
+
+
+<style>
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 50px;
+  }
+
+  h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  table {
+    width: 80%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid black;
+  }
+  td.price {
+    text-align: right;
+    font-weight: bold;
+  }
+
+  th {
+    background-color: #f2f2f2;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  .btn {
+    color: white;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .btn-primary2 {
+    background-color: #FF0000;
+    border-color: #007bff;
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+  }
+
+  .btn-primary:focus,
+  .btn-primary.focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+  }
+
+  .btn-primary:active,
+  .btn-primary.active {
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+  .container1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 50px;
+}
+
+.d-flex {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+.btn-primary {
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+/* Add this CSS for the product image */
+.product-image {
+  max-width: 100px;
+  max-height: 100px;
+}
+
+td.price {
+    white-space: nowrap; /* Prevent line breaks within the cell */
+  }
+</style>
