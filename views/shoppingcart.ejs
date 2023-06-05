@@ -1,7 +1,13 @@
-<%- include('partials/header'); -%>
+<%- include('partials/header', { user: user }) -%>
 
 <style>
 .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+.center-content {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -70,10 +76,20 @@
 .right-section {
   margin-left: 20px;
 }
+
+.empty-cart {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Add a class to hide the delete button by default */
+.delete-product-btn {
+  display: none;
+}
 </style>
 
 <% if (!product || product.length === 0) { %>
-  <div class="shopping-cart">
+  <div class="center-content">
     <a href="/productpage" class="buy-products-btn">Add Products to Shopping Cart</a>
     <div class="empty-cart">
       <p>Your shopping cart is empty.</p>
@@ -97,14 +113,17 @@
       <tbody>
         <% for (let i = 0; i < product.length; i++) { %>
           <tr>
-            <td><input type="checkbox" name="selectedProducts" value="<%= product[i]._id %>" class="product-checkbox"></td>
+            <td>
+              <input type="checkbox" name="selectedProducts" value="<%= product[i]._id %>" class="product-checkbox" onchange="toggleDeleteButton(this)">
+            </td>
             <td><img src="data:<%= product[i].image.contentType %>;base64,<%= product[i].image.data.toString('base64') %>" alt="Product Image" class="product-image"></td>
             <td><%= product[i].product_name %></td>
             <td><%= product[i].units %></td>
             <td><%= product[i].price %></td>
             <td><%= product[i].product_quantity %></td>
             <td><%= product[i].subtotal_per_unit_and_quantity %></td>
-            <td><button type="button" class="delete-product-btn" data-product-id="<%= product[i]._id %>">Delete Selected</button></td>
+            <td><button type="button" class="delete-product-btn" onclick="deleteProduct('<%= product[i]._id %>')">Delete Selected</button>
+            </td>
           </tr>
         <% } %>
       </tbody>
@@ -131,66 +150,77 @@
 <% } %>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-  // Get the checkboxes
-  var checkboxes = document.querySelectorAll(".product-checkbox");
+  function toggleDeleteButton(checkbox) {
+  var deleteButton = checkbox.parentNode.parentNode.querySelector('.delete-product-btn');
+  if (checkbox.checked) {
+    deleteButton.style.display = 'inline-block';
+  } else {
+    deleteButton.style.display = 'none';
+  }
+}
 
-  // Attach event listener to each checkbox
-  checkboxes.forEach(function(checkbox) {
-    checkbox.addEventListener("change", function() {
-      var totalItemsChecked = 0;
-      var overallPrice = 0;
 
-      // Loop through the checkboxes to calculate the total items checked and overall price
-      checkboxes.forEach(function(checkbox) {
-        if (checkbox.checked) {
-          var row = checkbox.parentNode.parentNode;
-          var quantity = parseInt(row.querySelector("td:nth-child(6)").innerText);
-          var subtotal = parseFloat(row.querySelector("td:nth-child(7)").innerText);
+  document.addEventListener("DOMContentLoaded", function() {
+    // Get the checkboxes
+    var checkboxes = document.querySelectorAll(".product-checkbox");
 
-          totalItemsChecked += quantity;
-          overallPrice += subtotal;
-        }
+    // Attach event listener to each checkbox
+    checkboxes.forEach(function(checkbox) {
+      checkbox.addEventListener("change", function() {
+        var totalItemsChecked = 0;
+        var overallPrice = 0;
+
+        // Loop through the checkboxes to calculate the total items checked and overall price
+        checkboxes.forEach(function(checkbox) {
+          if (checkbox.checked) {
+            var row = checkbox.parentNode.parentNode;
+            var quantity = parseInt(row.querySelector("td:nth-child(6)").innerText);
+            var subtotal = parseFloat(row.querySelector("td:nth-child(7)").innerText);
+
+            totalItemsChecked += quantity;
+            overallPrice += subtotal;
+          }
+        });
+
+        // Update the values in the UI
+        document.getElementById("totalItemsChecked").innerText = totalItemsChecked;
+        document.getElementById("overallPrice").innerText = overallPrice.toFixed(2);
       });
-
-      // Update the values in the UI
-      document.getElementById("totalItemsChecked").innerText = totalItemsChecked;
-      document.getElementById("overallPrice").innerText = overallPrice.toFixed(2);
     });
-  });
 
-  // Delete button click event
-  var deleteButtons = document.querySelectorAll(".delete-product-btn");
-  deleteButtons.forEach(function(button) {
-    button.addEventListener("click", function() {
-      var productId = button.dataset.productId;
-      deleteProduct(productId);
+    // Delete button click event
+    var deleteButtons = document.querySelectorAll(".delete-product-btn");
+    deleteButtons.forEach(function(button) {
+      button.addEventListener("click", function() {
+        var productId = button.dataset.productId;
+        deleteProduct(productId);
+      });
     });
-  });
 
-  // Function to delete a product
-  function deleteProduct(productId) {
-    fetch("/delete-product-shoppintcart/:productId", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ productId: productId })
-    })
-    .then(function(response) {
+    // Function to delete a product
+    function deleteProduct(productId) {
+  fetch("/delete-product-shoppingcart/" + productId, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then(function (response) {
       if (response.ok) {
         // Product deleted successfully, you can perform any necessary UI updates
         console.log("Product deleted");
+        window.location.reload(); // Reload the page after deleting the product
       } else {
         // Error occurred while deleting the product
         console.error("Error deleting product");
       }
     })
-    .catch(function(error) {
+    .catch(function (error) {
       console.error("Error deleting product", error);
     });
-  }
-});
+}
+
+  });
 </script>
 
 <%- include('partials/footer'); -%>

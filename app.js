@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 const authRoutes = require('./routes/routes');
-const { requireAuth, checkUser } = require('./middleware/authMiddleware');
+const { requireAuth, checkUser,requireAdminOrSeller } = require('./middleware/authMiddleware');
 const userModel = require('./models/User');
 const product = require('./models/Products');
 
@@ -38,10 +38,10 @@ app.get('*', checkUser);
 app.get('/', (req, res) => res.render('home',{ product: product }));
 
 
-app.get('/smoothies', requireAuth, (req, res) => res.render('smoothies'));
-app.get('/adminsmoothies', requireAuth, (req, res) => res.render('adminsmoothies'));
+app.get('/smoothies', requireAuth, requireAdminOrSeller,(req, res) => res.render('smoothies'));
+app.get('/adminsmoothies', requireAuth,requireAdminOrSeller, (req, res) => res.render('adminsmoothies'));
 
-app.get('/userlists', requireAuth, function (req, res) {
+app.get('/userlists',requireAdminOrSeller, requireAuth, function (req, res) {
   userModel.find({}, function (err, users) {
     if (err) throw err;
     const currentUser = res.locals.user; // Get the current user from res.locals
@@ -50,7 +50,7 @@ app.get('/userlists', requireAuth, function (req, res) {
   });
 });
 
-app.get('/editusers', requireAuth, function (req, res) {
+app.get('/editusers',requireAdminOrSeller, requireAuth, function (req, res) {
   userModel.find({}, function (err, users) {
     if (err) throw err;
     const currentUser = res.locals.user; // Get the current user from res.locals
@@ -59,7 +59,7 @@ app.get('/editusers', requireAuth, function (req, res) {
   });
 });
 
-app.post('/edituserstatus', requireAuth, function (req, res) {
+app.post('/edituserstatus',requireAdminOrSeller, requireAuth, function (req, res) {
   const data = Array.isArray(req.body) ? req.body : [req.body]; // Ensure data is an array
 
   // Loop through the data and update the status field in MongoDB
@@ -82,7 +82,7 @@ app.post('/edituserstatus', requireAuth, function (req, res) {
   res.json({ message: 'Status updated successfully' });
 });
 
-app.post('/editusers', requireAuth, function (req, res) {
+app.post('/editusers', requireAdminOrSeller,requireAuth, function (req, res) {
   const userId = req.body.userId; // Retrieve userId from the request body
 
   userModel.findByIdAndUpdate(userId, { isUserDeleted: true }, function (err, user) {
@@ -96,7 +96,7 @@ app.post('/editusers', requireAuth, function (req, res) {
   });
 });
 
-app.delete('/deleteuser/:userId', requireAuth, function (req, res) {
+app.delete('/deleteuser/:userId',requireAdminOrSeller, requireAuth, function (req, res) {
   const userId = req.params.userId;
   userModel.findByIdAndDelete(userId, function (err, user) {
     if (err) {

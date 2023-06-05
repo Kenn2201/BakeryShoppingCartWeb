@@ -131,11 +131,15 @@ module.exports.cart_items_count_get = async (req, res) => {
 
 module.exports.cart_count_get = async (req, res) => {
   try {
-    // Retrieve the cart count for the logged-in user
-    const userId = req.user.id;
-    const cartCount = await ShoppingCart.countDocuments({ customer_id: userId });
+    // Fetch the product and cart data here
+    // For example:
+    // const product = ...;
 
-    res.json({ count: cartCount });
+    const cart = {
+      totalItems: 0
+    };
+
+    res.render('home', { product: product, });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
@@ -148,10 +152,12 @@ module.exports.cart_count_get = async (req, res) => {
 module.exports.shoppingcart_get = async (req, res) => {
   try {
     // Retrieve shopping cart items for the logged-in user
+    const currentUser = req.user; // Assuming you are using a middleware to store the user object in the request
+    const currency = currentUser.currency;
     const userId = req.user.id;
     const shoppingCartItems = await ShoppingCart.find({ customer_id: userId });
 
-    res.render('shoppingCart', { product: shoppingCartItems, user: req.user });
+    res.render('shoppingCart', { product: shoppingCartItems, user: req.user ,user: currentUser, currency: currency});
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
@@ -423,24 +429,23 @@ module.exports.edit_product_post = async (req, res) => {
 
 
 
+// Delete a product from the shopping cart
 module.exports.delete_product_cart = async (req, res) => {
   const productId = req.params.productId;
-  if (!mongoose.Types.ObjectId.isValid(productId)) {
-    return res.status(400).json({ error: 'Invalid product ID' });
-  }
+  const userId = req.user.id;
 
   try {
-    const deletedProduct = await ShoppingCart.findOneAndDelete({ _id: productId });
-    if (!deletedProduct) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-    console.log('Product has been deleted:', deletedProduct);
-    res.status(200).json({ message: 'Product deleted successfully' });
+    // Delete the product from the shopping cart
+    await ShoppingCart.deleteOne({ customer_id: userId, product_id: productId });
+
+    res.sendStatus(200);
   } catch (err) {
-    console.error('Error deleting product:', err);
-    res.status(500).json({ error: 'An error occurred while deleting the product' });
+    console.error(err);
+    res.sendStatus(500);
   }
 };
+
+
 
 
 module.exports.delete_product = async (req, res) => {
@@ -485,6 +490,7 @@ module.exports.signup_post = async (req, res) => {
     }
   }
 };
+
 
 
   

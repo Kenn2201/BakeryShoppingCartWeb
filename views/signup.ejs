@@ -1,6 +1,6 @@
 <%- include('partials/header'); -%>
 
-<form>
+<form action="/signup" method="post">
   <h2>Sign up</h2>
   <label for="email">Email</label>
   <input type="text" name="email" required />
@@ -30,7 +30,7 @@
 
   
   
-  <button>Sign up</button>
+  <button type="submit">Sign up</button>
 </form>
 
 <%- include('partials/footer'); -%>
@@ -57,7 +57,7 @@
     const email = form.email.value;
     const password = form.password.value;
     const contactNumber = form.contactNumber.value;
-    const name = form.name.value;
+    const customerName = form.customerName.value;
     const age = form.age.value;
     const address = form.address.value;
 
