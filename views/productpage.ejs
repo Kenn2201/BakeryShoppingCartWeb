@@ -1,116 +1,235 @@
-<style>
-  .product-page {
-  margin: 20px auto;
-  max-width: 800px;
-  padding: 20px;
-}
-
-.page-title {
-  font-size: 24px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.product-list {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  grid-gap: 20px;
-}
-
-.product {
-  border: 1px solid #ddd;
-  padding: 20px;
-  text-align: center;
-  background-color: #FCEDDA;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.product-image-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-}
-
-.product-image-box {
-  width: 150px;
-  height: 150px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.product-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  background-color: transparent; /* Add this line to remove the gray background */
-}
-
-.product-details {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.product-name {
-  font-size: 18px;
-  margin: 10px 0;
-}
-
-.price {
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.discounted {
-  text-decoration: line-through;
-  color: #888;
-}
-
-.product-quantity {
-  margin-bottom: 10px;
-}
-
-.add-to-cart {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.btn {
-  color: #808080;
-  text-decoration: none;
-  display: inline-block;
-  padding: 8px 16px;
-  font-size: 14px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background-color: #FEE996;
-  border-color: #FEE996;
-}
-
-.btn-primary:hover {
-  background-color: #FFFFFF;
-  border-color: #808080;
-}
-
-</style>
-
-
 <%- include('partials/header'); -%>
 
+<style>
+  .product-page {
+    margin: 20px auto;
+    max-width: 800px;
+    padding: 20px;
+  }
+
+  .page-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .product-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-gap: 20px;
+  }
+
+  .product {
+    border: 1px solid #ddd;
+    padding: 20px;
+    text-align: center;
+    background-color: #FCEECF;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .product-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+  }
+
+  .product-image-box {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: transparent;
+  }
+
+  .product-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .product-name {
+    font-size: 18px;
+    margin: 10px 0;
+  }
+
+  .price {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .discounted {
+    text-decoration: line-through;
+    color: #888;
+  }
+
+  .product-quantity {
+    margin-bottom: 10px;
+  }
+
+  .add-to-cart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .btn {
+    color: #808080;
+    text-decoration: none;
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background-color: #FEE996;
+    border-color: #FEE996;
+  }
+
+  .btn-primary:hover {
+    background-color: #FFFFFF;
+    border-color: #808080;
+  }
+
+  .most-sold-products {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-gap: 20px;
+  }
+
+  .most-sold-product {
+    border: 1px solid #ddd;
+    padding: 20px;
+    text-align: center;
+    background-color: #FCEECF;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .most-sold-product .product-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+  }
+
+  .most-sold-product .product-image-box {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  .most-sold-product .product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: transparent;
+  }
+
+  .most-sold-product .product-name {
+    font-size: 16px;
+    margin: 10px 0;
+  }
+
+  .most-sold-product .price {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .most-sold-product .discounted {
+    text-decoration: line-through;
+    color: #888;
+  }
+
+  .most-sold-product .product-quantity {
+    margin-bottom: 10px;
+  }
+
+  .most-sold-product .add-to-cart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .most-sold-product .btn {
+    color: #808080;
+    text-decoration: none;
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .most-sold-product .btn-primary {
+    background-color: #FEE996;
+    border-color: #FEE996;
+  }
+
+  .most-sold-product .btn-primary:hover {
+    background-color: #FFFFFF;
+    border-color: #808080;
+  }
+</style>
+
 <div class="product-page">
+  <% if (products.length > 0) { %>
+    <h2 class="page-title">Most Sold Products</h2>
+    <div class="most-sold-products">
+      <% products.sort((a, b) => b.sold_count - a.sold_count).slice(0, 3).forEach(product => { %>
+        <div class="most-sold-product">
+          <div class="product-image-container">
+            <div class="product-image-box">
+              <img class="product-image" src="data:<%= product.image.contentType %>;base64,<%= product.image.data.toString('base64') %>" alt="Product Image">
+            </div>
+          </div>
+          <h4 class="product-name"><%= product.product_name %></h4>
+          <% if (product.discounted_price && product.discounted_price < product.price && product.discounted_price > 0) { %>
+            <% if (product.previous_price) { %>
+              <p class="price discounted">
+                <s>₱ <%= product.previous_price.toFixed(2) %></s>
+              </p>
+            <% } %>
+            <p class="price">₱ <%= product.price.toFixed(2) %> per <%= product.units %></p>
+          <% } else { %>
+            <% if (product.previous_price && product.discounted_price !== 0) { %>
+              <p class="price discounted">
+                <s>₱ <%= product.previous_price.toFixed(2) %></s>
+              </p>
+            <% } %>
+            <p class="price">₱ <%= product.price.toFixed(2) %> per <%= product.units %></p>
+          <% } %>
+          <p class="product-quantity">Stock Available: <%= product.product_quantity %> <%= product.units %></p>
+          <div class="add-to-cart">
+            <a href="/product/<%= product._id %>" class="btn btn-primary view-product-btn" data-product-id="<%= product._id %>">View Product</a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
   <h2 class="page-title">Available Products</h2>
   <ul class="product-list">
     <% products.forEach(product => { %>
@@ -127,16 +246,16 @@
               <s>₱ <%= product.previous_price.toFixed(2) %></s>
             </p>
           <% } %>
-          <p class="price">₱ <%= product.price.toFixed(2) %></p>
+          <p class="price">₱ <%= product.price.toFixed(2) %> per <%= product.units %></p>
         <% } else { %>
           <% if (product.previous_price && product.discounted_price !== 0) { %>
             <p class="price discounted">
               <s>₱ <%= product.previous_price.toFixed(2) %></s>
             </p>
           <% } %>
-          <p class="price">₱ <%= product.price.toFixed(2) %></p>
+          <p class="price">₱ <%= product.price.toFixed(2) %> per <%= product.units %></p>
         <% } %>
-        <p class="product-quantity">Stock Available: <%= product.product_quantity %></p>
+        <p class="product-quantity">Stock Available: <%= product.product_quantity %> <%= product.units %></p>
         <div class="add-to-cart">
           <a href="/product/<%= product._id %>" class="btn btn-primary view-product-btn" data-product-id="<%= product._id %>">View Product</a>
         </div>
@@ -146,4 +265,3 @@
 </div>
 
 <%- include('partials/footer'); -%>
-

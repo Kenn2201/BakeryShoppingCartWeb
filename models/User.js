@@ -50,7 +50,6 @@ const userSchema = new moongoose.Schema({
   },
   currency: {
       type: Number,
-      required: [true,],
       default: 1000,
   },
 });
@@ -60,10 +59,18 @@ const userSchema = new moongoose.Schema({
 
 
 
-userSchema.pre('save', async function(next) {
-    const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) {
+      return next();
+    }
+  
+    try {
+      const salt = await bcrypt.genSalt(10);
+      this.password = await bcrypt.hash(this.password, salt);
+      next();
+    } catch (error) {
+      next(error);
+    }
   });
 
 // static method to login user
@@ -82,7 +89,7 @@ userSchema.statics.login = async function(email, password) {
 
 
 
-const User = moongoose.model('user',userSchema);
+const User = moongoose.model('User',userSchema);
 
 
 module.exports = User;

@@ -157,3 +157,27 @@ footer{
   background-color: #f2f2f2;
   color: #999999;
 }
+#shopping-cart-link {
+  display: flex;
+  align-items: center;
+}
+
+.cart-counter {
+  margin-right: 10px;
+}
+
+#shopping-cart-link img {
+  margin-right: 5px;
+}
+
+#shopping-cart-link img:last-child {
+  margin-right: 0;
+}
+.history-link {
+  display: flex;
+  align-items: center;
+}
+
+.history-text {
+  margin-left: 5px;
+}

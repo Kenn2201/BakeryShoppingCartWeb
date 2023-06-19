@@ -7,6 +7,24 @@ const upload = multer({ dest: 'uploads/' });
 
 router.route('/sellerui').get(requireAdminOrSeller, authControllers.sellerui_get);
 
+router.route('/update-quantity-shoppingcart/:productId')
+  .post(requireAuth, authControllers.updateQuantityShoppingCart);
+
+
+router.route('/create-order').post(requireAuth, authControllers.createOrder);
+router.route('/payment-page/:orderId').get(requireAuth, authControllers.payment_page_get);
+
+router.route('/reciepthistory').get(requireAuth,authControllers.getreciepthistory);
+router.route('/reciepthistory/:receipt_id').get(requireAuth,authControllers.getreciepthistoryviewpage);
+
+
+router.route('/process-payment').post(requireAuth, authControllers.process_payment);
+router.route('/cancel-payment').post(requireAuth, authControllers.cancel_payment);
+
+router.route('/shoppingcart')
+  .get(requireAuth, authControllers.shoppingcart_get)
+  .post(requireAuth, authControllers.shoppingcart_post);
+
 router.route('/login')
   .get(authControllers.login_get)
   .post(authControllers.login_post);
@@ -23,9 +41,7 @@ router.route('/cart-count').get(requireAuth, authControllers.cart_items_count_ge
 router.route('/userlists')
   .get(requireAdminOrSeller, authControllers.userlists_get);
 
-router.route('/shoppingcart')
-  .get(requireAuth, authControllers.shoppingcart_get)
-  .post(requireAuth, authControllers.shoppingcart_post);
+
 
 router.get('/cart-count', requireAuth, authControllers.cart_count_get);
 
@@ -58,8 +74,10 @@ router.route('/edit-product/:productId')
 router.route('/delete-product/:productId')
   .post(requireAdminOrSeller, authControllers.delete_product);
 
-router.route('/delete-product-shoppingcart/:productId')
+router.route('/delete-product-shoppingcart/')
   .post(requireAuth, authControllers.delete_product_cart);
+
+
 
 
 

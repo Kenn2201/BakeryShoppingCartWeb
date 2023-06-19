@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const shoppingCartSchema = new mongoose.Schema({
   customer_id: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
   product_id: {
@@ -30,6 +30,8 @@ const shoppingCartSchema = new mongoose.Schema({
   product_quantity: {
     type: Number,
     required: true,
+    default: 1,
+    min: 1,
   },
   units: {
     type: String,

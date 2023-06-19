@@ -43,8 +43,8 @@ const productSchema = new mongoose.Schema({
   },
   units: {
     type: String,
-    enum: ['whole', 'half', 'slice'],
-    default: 'whole',
+    enum: ['piece','whole', 'half', 'slice'],
+    default: 'piece',
   },
   sold_count: {
     type: Number,

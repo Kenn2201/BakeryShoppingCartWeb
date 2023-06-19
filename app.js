@@ -5,7 +5,7 @@ const authRoutes = require('./routes/routes');
 const { requireAuth, checkUser,requireAdminOrSeller } = require('./middleware/authMiddleware');
 const userModel = require('./models/User');
 const product = require('./models/Products');
-
+const authControllers = require('./controllers/authControllers');
 // middleware
 app.use(express.static('public'));
 app.use(express.json());
@@ -16,8 +16,8 @@ app.use(cookieParser());
 app.set('view engine', 'ejs');
 
 // database connection
-const authDbURI = 'mongodb+srv://test123:123456!@cluster0.34gh2cq.mongodb.net/node-auth';
-const productsDbURI = 'mongodb+srv://test123:123456!@cluster0.34gh2cq.mongodb.net/node-products';
+const authDbURI = 'mongodb+srv://test123:123456!@cluster0.9qnppcz.mongodb.net/node-auth';
+const productsDbURI = 'mongodb+srv://test123:123456!@cluster0.9qnppcz.mongodb.net/node-products';
 
 mongoose.connect(authDbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true })
   .then(() => {
@@ -37,7 +37,7 @@ mongoose.connect(authDbURI, { useNewUrlParser: true, useUnifiedTopology: true, u
 app.get('*', checkUser);
 app.get('/', (req, res) => res.render('home',{ product: product }));
 
-
+app.post('/process-payment',requireAuth, authControllers.process_payment); // Add the route for processing the payment
 app.get('/smoothies', requireAuth, requireAdminOrSeller,(req, res) => res.render('smoothies'));
 app.get('/adminsmoothies', requireAuth,requireAdminOrSeller, (req, res) => res.render('adminsmoothies'));
 
