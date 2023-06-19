@@ -25,21 +25,32 @@ nav{
   align-items: flex-end;
   margin-bottom: 120px;
 }
-nav ul{
+
+
+nav ul {
   display: flex;
   align-items: center;
 }
-nav li{
+
+nav li {
   margin-left: 20px;
 }
-nav li a{
+
+nav li a {
   text-transform: uppercase;
   font-weight: 700;
   font-size: 0.8em;
-  display: block;
+  display: flex;  /* Add this line */
+  align-items: center;  /* Add this line */
   padding: 10px 16px;
   letter-spacing: 2px;
 }
+
+nav li img {
+  width: 20px;  /* Adjust the width to your desired size */
+  margin-right: 5px;  /* Adjust the margin to your desired spacing */
+}
+
 .btn{
   border-radius: 36px;
   background: #FEE996;
@@ -55,8 +66,9 @@ form{
   padding: 30px;
   box-shadow: 1px 2px 3px rgba(0,0,0,0.1);
   border-radius: 10px;
-  background: white;
+  background-color: #FCEDDA;
 }
+
 input{
   padding: 10px 12px;
   border-radius: 4px;
@@ -90,6 +102,10 @@ header{
   display: flex;
   align-items: center;
 }
+.header-bg {
+  background-color: #FCEDDA;
+}
+
 header img{
   width: 250px;
   margin-right: 40px;
@@ -140,4 +156,28 @@ footer{
 .deleted {
   background-color: #f2f2f2;
   color: #999999;
+}
+#shopping-cart-link {
+  display: flex;
+  align-items: center;
+}
+
+.cart-counter {
+  margin-right: 10px;
+}
+
+#shopping-cart-link img {
+  margin-right: 5px;
+}
+
+#shopping-cart-link img:last-child {
+  margin-right: 0;
+}
+.history-link {
+  display: flex;
+  align-items: center;
+}
+
+.history-text {
+  margin-left: 5px;
 }

@@ -9,12 +9,28 @@
     <label for="password">Password</label>
     <input type="password" name="password"/>
     <div class="password error"></div>
-    <button>Login</button>
+    <button class="login-button">Login</button>
   
 </form>
   
 <%- include('partials/footer'); -%>
   
+
+<style>
+  /* Button styles */
+  .login-button {
+      background-color: #eecb40;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+  }
+
+  /* Hover effect */
+  .login-button:hover {
+      background-color: #808080;
+  }
+</style>
 <script>
     const form = document.querySelector('form');
     const emailError = document.querySelector('.email.error');
@@ -44,13 +60,16 @@
         if (data.errors){
             emailError.textContent = data.errors.email;
             passwordError.textContent = data.errors.password;}
-        if (data.userLogin){
-            if (data.role === 'admin') {
-                location.assign('/adminsmoothies');
-            } else {
-                location.assign('/');
-            }
-        }
+            if (data.userLogin) {
+  if (data.role === 'admin') {
+    location.assign('/adminsmoothies');
+  } else if (data.role === 'seller') {
+    location.assign('/sellerui');
+  } else {
+    location.assign('/');
+  }
+}
+
         }catch(err){
             console.log(err);
         }

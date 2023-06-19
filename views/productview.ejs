@@ -1,0 +1,195 @@
+<%- include('partials/header'); -%>
+
+<div class="product-view">
+  <div class="product-image-container">
+    <img class="product-image" src="data:<%= product.image.contentType %>;base64,<%= product.image.data.toString('base64') %>" alt="Product Image">
+  </div>
+  <div class="product-details">
+    <h2 class="product-name"><%= product.product_name %></h2>
+    <p class="product-description"><%= product.description %></p>
+    <p class="product-price">Price: ₱ <%= product.price.toFixed(2) %> per <%= product.units %></p>
+    <p class="product-quantity">Stock Available: <%= product.product_quantity %></p>
+    
+    <div class="quantity-controls">
+      <button class="btn btn-primary minus-btn">-</button>
+      <span class="quantity-label">1</span>
+      <button class="btn btn-primary plus-btn">+</button>
+    </div>
+    
+    <div class="add-to-cart">
+      <button class="btn btn-primary add-to-cart-btn" data-product-id="<%= product._id %>" data-product-quantity="<%= product.product_quantity %>">Add to Cart</button>
+
+    </div>
+  </div>
+  
+</div>
+
+<div class="container mt-3">
+  <div class="text-center">
+    <a href="/productpage" class="btn btn-primary">Back</a>
+  </div>
+</div>
+
+<%- include('partials/footer'); -%>
+
+<script>
+  // Get the quantity label element
+const quantityLabel = document.querySelector('.quantity-label');
+
+// Get the minus and plus buttons
+const minusBtn = document.querySelector('.minus-btn');
+const plusBtn = document.querySelector('.plus-btn');
+
+// Get the add to cart button
+const addToCartBtn = document.querySelector('.add-to-cart-btn');
+
+// Get the initial quantity value
+let quantity = parseInt(quantityLabel.innerText);
+
+// Add event listener to the minus button
+minusBtn.addEventListener('click', () => {
+  if (quantity > 1) {
+    quantity--;
+    quantityLabel.innerText = quantity;
+  }
+});
+
+// Add event listener to the plus button
+plusBtn.addEventListener('click', () => {
+  const maxQuantity = parseInt(addToCartBtn.dataset.productQuantity);
+  if (quantity < maxQuantity) {
+    quantity++;
+    quantityLabel.innerText = quantity;
+  }
+});
+
+// Add event listener to the add to cart button
+addToCartBtn.addEventListener('click', () => {
+  const productId = addToCartBtn.dataset.productId;
+  const productQuantity = quantity;
+
+  // Send a POST request to the shopping cart route with the product ID and quantity
+  fetch('/shoppingcart', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ product_id: productId, product_quantity: productQuantity })
+  })
+    .then(response => response.json())
+    .then(data => {
+      // Handle the response data if needed
+      console.log(data);
+      // Redirect to the shopping cart page
+      window.location.href = '/shoppingcart';
+    })
+    .catch(error => {
+      console.error(error);
+    });
+});
+
+</script>
+
+
+<style>
+.product-view {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #FCEDDA;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 20px auto;
+  max-width: 600px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product-image-container {
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.product-details {
+  flex: 1;
+  margin-left: 20px;
+}
+
+.product-name {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.product-description {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.product-price {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.product-quantity {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.add-to-cart {
+  margin-top: 20px;
+}
+
+.container {
+  text-align: center;
+}
+
+/* Additional styling for the back button */
+.btn-primary:hover {
+  background-color: #808080;
+  border-color: #808080;
+}
+
+.btn-primary:focus,
+.btn-primary.focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+}
+
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active,
+.show > .btn-primary.dropdown-toggle {
+  background-color: #808080;
+  border-color: #808080;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active:focus,
+.btn-primary:not(:disabled):not(.disabled):active:focus,
+.show > .btn-primary.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.minus-btn,
+.plus-btn {
+  font-size: 18px;
+  padding: 0 10px;
+}
+
+.quantity-label {
+  font-size: 16px;
+  margin: 0 10px;
+}
+
+</style>
+ 
