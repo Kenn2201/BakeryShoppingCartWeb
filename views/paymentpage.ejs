@@ -1,0 +1,111 @@
+<!-- Add a reference to Bootstrap CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<div class="payment-page">
+  <div class="container">
+    <% if (!order.isPaid || !order.isCompleted) { %>
+      <div class="row">
+        <div class="col-md-12">
+          <h2 class="my-4">Order Details</h2>
+          <div>
+            <p>Order ID: <%= order._id %></p>
+            <p>Is Paid: <%= order.isPaid %></p>
+            <p>Is Completed: <%= order.isCompleted %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <h2 class="my-4">Cart Items</h2>
+          <% let totalCheckoutPrice = 0; %>
+          <% order.cartItems.forEach(function(item) { %>
+            <% totalCheckoutPrice += item.overall_total_checkout_price; %>
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title"><%= item.product_name %></h4>
+                <img src="data:<%= item.image.contentType %>;base64,<%= item.image.data.toString('base64') %>" alt="<%= item.product_name %>" class="img-thumbnail mb-3" style="max-width: 200px;">
+                <p>Product ID: <%= item.product_id %></p>
+                <p>Customer ID: <%= item.customer_id %></p>
+                <p>Description: <%= item.description %></p>
+                <p>Price: ₱ <%= item.price.toFixed(2) %></p>
+                <p>Quantity: <%= item.product_quantity %></p>
+                <p>Units: <%= item.units %></p>
+                <p>Subtotal: ₱ <%= item.subtotal_per_unit_and_quantity.toFixed(2) %></p>
+              </div>
+            </div>
+          <% }); %>
+          <p class="total-checkout-price">Total Checkout Price: ₱ <%= totalCheckoutPrice.toFixed(2) %></p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12 text-center my-4">
+          <button class="btn btn-primary pay-btn">Pay</button>
+          <a href="/shoppingcart" class="btn btn-secondary cancel-btn" onclick="return confirm('Are you sure you want to cancel the payment?');">Cancel</a>
+        </div>
+      </div>
+
+      <%- include('partials/footer'); -%>
+
+      <% if (order.isCompleted) { %>
+        <script>
+          window.onload = function() {
+            alert('Order completed');
+          };
+        </script>
+      <% } %>
+
+      <script>
+        const cancelBtn = document.querySelector('.cancel-btn');
+        const payBtn = document.querySelector('.pay-btn');
+
+        payBtn.addEventListener('click', async () => {
+          console.log('Pay button clicked');
+
+          const response = await fetch('/process-payment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ _id: '<%= order._id %>' })
+          });
+
+          console.log('Response:', response);
+
+          if (response.ok) {
+            console.log('Payment processed successfully');
+            window.location.href = '/shoppingcart';
+          } else {
+            console.error('Error processing payment');
+          }
+        });
+
+        // Add event listener to the cancel button
+        cancelBtn.addEventListener('click', async () => {
+          const response = await fetch('/cancel-payment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ orderId: '<%= order._id %>' })
+          });
+
+          if (response.ok) {
+            window.location.href = '/shoppingcart';
+            window.location.reload();
+            
+          } else {
+            console.error('Error cancelling payment');
+          }
+        });
+      </script>
+    <% } else { %>
+      <div class="row">
+        <div class="col-md-12">
+          <h2 class="my-4">No orders</h2>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>

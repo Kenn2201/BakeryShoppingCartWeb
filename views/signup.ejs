@@ -1,0 +1,102 @@
+<%- include('partials/header'); -%>
+
+<form action="/signup" method="post">
+  <h2>Sign up</h2>
+  <label for="email">Email</label>
+  <input type="text" name="email" required />
+  <div class="email error"></div>
+
+  <label for="password">Password</label>
+  <input type="password" name="password" required />
+  <div class="password error"></div>
+  
+  
+  
+  <label for="contactNumber">Contact Number</label>
+  <input type="text" name="contactNumber" required />
+  <div class="contactNumber error"></div>
+  
+  <label for="name">Name</label>
+  <input type="text" name="customerName" required />
+  <div class="name error"></div>
+  
+  <label for="age">Age</label>
+  <input type="number" name="age" required />
+  <div class="age error"></div>
+  
+  <label for="address">Address</label>
+  <input type="text" name="address" required />
+  <div class="address error"></div>
+
+  
+  
+  <button type="submit">Sign up</button>
+</form>
+
+<%- include('partials/footer'); -%>
+
+<script>
+  const form = document.querySelector('form');
+  const emailError = document.querySelector('.email.error');
+  const passwordError = document.querySelector('.password.error');
+  const contactNumberError = document.querySelector('.contactNumber.error');
+  const nameError = document.querySelector('.name.error');
+  const ageError = document.querySelector('.age.error');
+  const addressError = document.querySelector('.address.error');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    emailError.textContent = '';
+    passwordError.textContent = '';
+    contactNumberError.textContent = '';
+    nameError.textContent = '';
+    ageError.textContent = '';
+    addressError.textContent = '';
+
+    const email = form.email.value;
+    const password = form.password.value;
+    const contactNumber = form.contactNumber.value;
+    const customerName = form.customerName.value;
+    const age = form.age.value;
+    const address = form.address.value;
+
+    try {
+      const res = await fetch('/signup', {
+        method: 'POST',
+        body: JSON.stringify({ email, password, contactNumber, customerName, age, address }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      const data = await res.json();
+      console.log(data);
+
+      if (data.errors) {
+        emailError.textContent = data.errors.email;
+        passwordError.textContent = data.errors.password;
+        contactNumberError.textContent = data.errors.contactNumber;
+        nameError.textContent = data.errors.name;
+        ageError.textContent = data.errors.age;
+        addressError.textContent = data.errors.address;
+      }
+
+      if (data.role === 'admin') {
+        location.assign('/adminsmoothies');
+      } else {
+        location.assign('/');
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  });
+</script>
+<style>
+  /* CSS styles here */
+
+  button:hover {
+    /* Add styles for the hover effect */
+    background-color: #ccc;
+    color: #fff;
+    cursor: pointer;
+  }
+</style>

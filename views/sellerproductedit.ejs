@@ -1,0 +1,60 @@
+<%- include('partials/header'); -%>
+
+<div class="container">
+  <form action="/edit-product/<%= product._id %>" method="POST" enctype="multipart/form-data">
+    <h2>Edit Product</h2>
+    <div class="form-group">
+      <label for="name">Product Name:</label>
+      <input type="text" name="name" id="name" value="<%= product.product_name %>" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="description">Product Description:</label>
+      <textarea name="description" id="description" rows="5" required><%= product.description %></textarea>
+    </div>
+    <div class="form-group">
+      <label for="price">Product Price:</label>
+      <input type="number" name="price" id="price" value="<%= product.price %>" required>
+    </div>
+    <div class="form-group">
+      <label for="discounted_price">Discount:</label>
+      <input type="number" name="discount" id="discount" value="<%= product.discount || '' %>" step="0.01" onchange="updatePreviousPrice(this)">
+    </div>
+    <div class="form-group">
+      <label for="quantity">Product Quantity:</label>
+      <input type="number" name="quantity" id="quantity" value="<%= product.product_quantity %>" required>
+    </div>
+    <div class="form-group">
+      <label for="units">Units:</label>
+      <select name="units" id="units">
+        <option value="piece">Piece</option>
+        <option value="slice">Slice</option>
+        <option value="whole">Whole</option>
+        <option value="half">Half</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="image">Product Image:</label>
+      <input type="file" name="image" id="image" accept="image/*">
+    </div>
+   
+    <button type="submit" class="btn">Update Product</button>
+  </form>
+</div>
+
+<%- include('partials/footer'); -%>
+
+<script>
+  function updatePreviousPrice(input) {
+    const discount = parseFloat(input.value);
+    const priceInput = document.getElementById('price');
+    const originalPrice = parseFloat(priceInput.value);
+
+    if (discount < originalPrice) {
+      const previousPrice = originalPrice;
+      priceInput.value = previousPrice.toFixed(2);
+    }
+  }
+</script>
+
+

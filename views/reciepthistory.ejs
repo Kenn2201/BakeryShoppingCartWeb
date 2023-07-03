@@ -1,0 +1,140 @@
+<%- include('partials/header'); -%>
+
+<style>
+  /* CSS Styles for Receipt History */
+  .receipt-history {
+    max-height: 500px;
+    overflow-y: scroll;
+    padding: 20px;
+    background-color: #f5f5f5;
+  }
+
+  .receipt-item {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+  }
+
+  .receipt-id {
+    margin-top: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .receipt-details p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .order-items-heading {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .order-items-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin-bottom: 0;
+  }
+
+  .order-item {
+    padding: 10px 0;
+    border-top: 1px solid #ccc;
+  }
+
+  .product-name {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .price {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .view-history-btn {
+    margin-top: 10px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .view-history-btn:hover {
+    background-color: #555;
+  }
+
+  .view-history-btn:focus {
+    outline: none;
+  }
+
+  /* Add more custom CSS styles as needed */
+
+</style>
+
+<section class="receipt-history">
+  <h1>Receipt History</h1>
+
+  <% if (receipts.length > 0) { %>
+    <ul class="list-group receipt-list">
+      <% receipts.forEach((receipt, index) => { %>
+        <li class="list-group-item receipt-item">
+          <h3 class="receipt-id">Receipt <%= index + 1 %>: <%= receipt._id %></h3>
+          <div class="receipt-details">
+            <% if (receipt.order_id) { %>
+              <p class="order-id">Order ID: <%= receipt.order_id._id %></p>
+            <% } else { %>
+              <p class="order-id">Order ID: N/A</p>
+            <% } %>
+            <% if (receipt.customer_id) { %>
+              <p class="customer-id">Customer ID: <%= receipt.customer_id._id %></p>
+              <p class="customer-email">Customer Email: <%= receipt.customer_id.email %></p>
+            <% } else { %>
+              <p class="customer-id">Customer ID: N/A</p>
+              <p class="customer-email">Customer Email: N/A</p>
+            <% } %>
+            <p class="order-created">Order Created At: <%= receipt.order_created_at %></p>
+            <p class="order-completed">Order Completed At: <%= receipt.order_completed_at %></p>
+          </div>
+          <h4 class="order-items-heading">Order Items:</h4>
+          <% if (receipt.order_items && receipt.order_items.length > 0) { %>
+            <ul class="list-group order-items-list">
+              <% receipt.order_items.forEach((item) => { %>
+                <li class="list-group-item order-item">
+                  <p class="product-name">Product: <%= item.product_name %></p>
+                  <p class="price">Price: <%= item.price.toFixed(2) %></p>
+                  <!-- Add other item details here -->
+                </li>
+              <% }) %>
+            </ul>
+          <% } else { %>
+            <p class="no-order-items">No order items found.</p>
+          <% } %>
+          <form action="/reciepthistory/<%= receipt._id %>" method="GET">
+            <button type="submit" class="view-history-btn">View Full History</button>
+          </form>
+        </li>
+      <% }) %>
+    </ul>
+  <% } else { %>
+    <p class="no-purchases">No history of purchases.</p>
+  <% } %>
+</section>
+
+
+<%- include('partials/footer'); -%>
