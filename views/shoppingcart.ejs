@@ -1,0 +1,415 @@
+<%- include('partials/header', { user: user }) -%>
+
+<style>
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    /* Add the following styles to enable a scroll bar */
+    overflow-y: auto;
+    max-height: 500px; /* Adjust the maximum height as needed */
+  }
+  
+  .center-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .product-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .product-table th,
+  .product-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .product-image {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+  }
+  
+  .product-info {
+    margin-bottom: 20px;
+  }
+  
+  .total-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+  }
+  
+  .total-section p {
+    margin: 0;
+  }
+  
+  .pay-now-btn {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .buy-products-btn {
+    background-color: #ffc107;
+    color: #000;
+    border: 1px solid #000;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .left-section {
+    flex-grow: 1;
+  }
+  
+  .right-section {
+    margin-left: 20px;
+  }
+  
+  .empty-cart {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  /* Add a class to hide the delete button by default */
+  .delete-product-btn {
+    display: none;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .quantity-controls {
+    display: flex;
+    align-items: center;
+  }
+  
+  .quantity-input {
+    width: 50px;
+    text-align: center;
+  }
+  
+  .quantity-control-button {
+    font-size: 16px;
+    margin: 0 5px;
+    cursor: pointer;
+  }
+  
+  /* Add styles to position the delete button below the table */
+  .delete-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+  
+  .delete-button-container .delete-product-btn {
+    margin-left: 10px;
+  }
+  .save-quantity-btn {
+  display: none;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+</style>
+
+<% if (!product || product.length === 0) { %>
+  <div class="center-content">
+    <a href="/productpage" class="buy-products-btn">Add Products to Shopping Cart</a>
+    <div class="empty-cart">
+      <p>Your shopping cart is empty.</p>
+    </div>
+  </div>
+<% } else { %>
+  <div class="container">
+    <table class="product-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Image</th>
+          <th>Product Name</th>
+          <th>Units</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (let i = 0; i < product.length; i++) { %>
+          <tr>
+            <td>
+              <input type="checkbox" name="selectedProducts" value="<%= product[i]._id %>" class="product-checkbox" onchange="toggleDeleteButton(this)">
+            </td>
+            <td><img src="data:<%= product[i].image.contentType %>;base64,<%= product[i].image.data.toString('base64') %>" alt="Product Image" class="product-image"></td>
+            <td><%= product[i].product_name %></td>
+            <td><%= product[i].units %></td>
+            <td>₱<%= product[i].price %></td>
+            <td>
+              <div class="quantity-controls">
+                <span class="quantity-control-button" onclick="decreaseQuantity(this, '<%= product[i]._id %>')">-</span>
+                <input type="number" min="1" value="<%= product[i].product_quantity %>" onchange="updateQuantity(this, '<%= product[i]._id %>')" class="quantity-input">
+                <span class="quantity-control-button" onclick="increaseQuantity(this, '<%= product[i]._id %>')">+</span>
+                <button type="button" class="save-quantity-btn" onclick="saveUpdatedQuantity('<%= product[i]._id %>')">Save</button>
+              </div>
+            </td>
+            
+            <td><span class="subtotal-price">₱<%= product[i].subtotal_per_unit_and_quantity.toFixed(2) %></span></td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+    
+    <div class="delete-button-container">
+      <button type="button" class="delete-product-btn" onclick="deleteSelectedProducts()">Delete Selected</button>
+    </div>
+
+    <div class="product-info">
+      <p>Customer ID: <%= product[0].customer_id %></p>
+      <!-- Add more product details as needed -->
+    </div>
+
+    <div class="total-section">
+      <div class="left-section">
+        <div class="total-container">
+          <p>Total of items checked to be ordered: <span id="totalItemsChecked">0</span></p>
+          <p>Overall Price: <span id="overallPrice">0</span></p>
+        </div>
+      </div>
+      <div class="right-section">
+        <button id="payNowBtn" class="pay-now-btn">Pay Now</button>
+        <button type="button" class="buy-products-btn" onclick="navigateToProductPage()">Buy Products</button>
+      </div>
+    </div>
+  </div>
+<% } %>
+
+<script>
+var reloaded = sessionStorage.getItem('reloaded');
+  
+  if (!reloaded) {
+    // Set the 'reloaded' flag in sessionStorage
+    sessionStorage.setItem('reloaded', 'true');
+  } else {
+    // Remove the 'reloaded' flag from sessionStorage
+    sessionStorage.removeItem('reloaded');
+
+    // Delay the redirect to allow enough time for data loading
+    setTimeout(function() {
+      // Redirect to the current URL to trigger the reload only once
+      window.location.href = window.location.href;
+    }, 500); // Adjust the delay as needed
+  }
+  
+
+document.getElementById("payNowBtn").addEventListener("click", function () {
+  var selectedProducts = Array.from(document.querySelectorAll('input[name="selectedProducts"]:checked'))
+    .map(function (checkbox) {
+      return checkbox.value;
+    });
+
+  fetch("/create-order", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ selectedProducts: selectedProducts }),
+  })
+    .then(function (response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Error creating order");
+      }
+    })
+    .then(function (data) {
+      // Redirect to the payment page with the orderId
+      window.location.href = "/payment-page/" + data.orderId;
+    })
+    .catch(function (error) {
+      console.error("Error creating order:", error);
+    });
+});
+
+function navigateToProductPage() {
+  window.location.href = "/productpage";
+}
+
+function toggleDeleteButton(checkbox) {
+  var deleteButton = document.querySelector('.delete-product-btn');
+  var checkboxes = document.querySelectorAll('.product-checkbox');
+  var selectedCount = 0;
+
+  checkboxes.forEach(function (checkbox) {
+    if (checkbox.checked) {
+      selectedCount++;
+      // Show the Save button for the corresponding row
+      checkbox.parentNode.parentNode.querySelector(".save-quantity-btn").style.display = "inline-block";
+    } else {
+      // Hide the Save button for the corresponding row
+      checkbox.parentNode.parentNode.querySelector(".save-quantity-btn").style.display = "none";
+    }
+  });
+
+  if (selectedCount > 0) {
+    deleteButton.style.display = 'inline-block';
+  } else {
+    deleteButton.style.display = 'none';
+  }
+}
+
+
+function updateQuantity(input, productId) {
+  var newQuantity = parseInt(input.value);
+  var row = input.parentNode.parentNode;
+  var price = parseFloat(row.querySelector("td:nth-child(5)").innerText.replace(/[^\d.-]/g, ''));
+  var subtotal = newQuantity * price;
+  row.querySelector("td:nth-child(7)").innerText = '₱' + subtotal.toFixed(2);
+
+  // Show the Save button
+  row.querySelector(".save-quantity-btn").style.display = "inline-block";
+
+  // Update the overall totals
+  updateTotals();
+}
+
+
+
+function saveUpdatedQuantity(productId) {
+  var input = document.querySelector(`input[value="${productId}"]`).parentNode.parentNode.querySelector(".quantity-input");
+  var newQuantity = parseInt(input.value);
+
+  fetch("/update-quantity-shoppingcart/" + productId, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ quantity: newQuantity }),
+  })
+    .then(function (response) {
+      if (response.ok) {
+        console.log("Quantity updated");
+        updateTotals();
+        window.location.href = "/shoppingcart";
+
+        // Hide the Save button
+        input.parentNode.querySelector(".save-quantity-btn").style.display = "none";
+        
+        // Uncheck the checkbox
+        input.parentNode.parentNode.querySelector(".product-checkbox").checked = false;
+        // Redirect back to the shopping cart
+        
+      } else {
+        console.error("Error updating quantity");
+      }
+    })
+    .catch(function (error) {
+      console.error("Error updating quantity:", error);
+    });
+}
+
+
+
+function increaseQuantity(button, productId) {
+  var input = button.parentNode.querySelector('.quantity-input');
+  var currentQuantity = parseInt(input.value);
+  input.value = currentQuantity + 1;
+  updateQuantity(input, productId);
+}
+
+function decreaseQuantity(button, productId) {
+  var input = button.parentNode.querySelector('.quantity-input');
+  var currentQuantity = parseInt(input.value);
+  if (currentQuantity > 1) {
+    input.value = currentQuantity - 1;
+    updateQuantity(input, productId);
+  }
+}
+
+function updateTotals() {
+  var checkboxes = document.querySelectorAll(".product-checkbox");
+  var totalItemsChecked = 0;
+  var overallPrice = 0;
+
+  checkboxes.forEach(function (checkbox) {
+    if (checkbox.checked) {
+      var row = checkbox.parentNode.parentNode;
+      var quantity = parseInt(row.querySelector(".quantity-input").value);
+      var price = parseFloat(row.querySelector("td:nth-child(5)").innerText.replace(/[^\d.]/g, ''));
+      var subtotal = quantity * price;
+
+      row.querySelector(".subtotal-price").innerText = '₱' + subtotal.toFixed(2);
+
+      totalItemsChecked += quantity;
+      overallPrice += subtotal;
+    }
+  });
+
+  document.getElementById("totalItemsChecked").innerText = totalItemsChecked;
+  document.getElementById("overallPrice").innerText = '₱' + overallPrice.toFixed(2);
+}
+
+function deleteSelectedProducts() {
+  var selectedProducts = Array.from(document.querySelectorAll('input[name="selectedProducts"]:checked'))
+    .map(function (checkbox) {
+      return checkbox.value;
+    });
+
+  fetch("/delete-product-shoppingcart", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ productIds: selectedProducts }),
+  })
+    .then(function (response) {
+      if (response.ok) {
+        console.log("Products deleted");
+        window.location.reload();
+      } else {
+        console.error("Error deleting products");
+      }
+    })
+    .catch(function (error) {
+      console.error("Error deleting products:", error);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  var checkboxes = document.querySelectorAll(".product-checkbox");
+
+  checkboxes.forEach(function(checkbox) {
+    checkbox.addEventListener("change", function() {
+      updateTotals();
+      toggleDeleteButton(checkbox);
+    });
+  });
+
+  updateTotals();
+});
+
+</script>
+
+<%- include('partials/footer') -%>

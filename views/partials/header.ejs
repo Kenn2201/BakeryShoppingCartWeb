@@ -1,0 +1,60 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bakery Shop</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav>
+    <% if (user && user.role === 'admin') { %>
+      <h1><a href="/adminsmoothies">RRK Bakery Shop</a></h1>
+    <% } else if (user && user.role === 'seller') { %>
+      <h1><a href="/sellerui">RRK Bakery Shop</a></h1>
+    <% } else { %>
+      <h1><a href="/">RRK Bakery Shop</a></h1>
+    <% } %>
+    <ul>
+      <% if (user) { %>
+        <li class="user-info">
+          <span class="user-email">Welcome, <%= user.email %></span>
+          <% if (user.role === 'user') { %>
+            <span class="user-currency">[₱<%= user.currency %>]</span> <!-- Show credits for user role only -->
+          <% } %>
+        </li>
+        <% if (user.role === 'admin') { %>
+          <li><a href="/userlists">User List</a></li>
+        <% } else if (user.role === 'seller') { %>
+          <li><a href="/selleruiproductlists">Seller Page</a></li>
+          <li><a href="/products-orders">Shop Orders</a></li> <!-- Add this line -->
+        <% } else { %>
+          <!-- Other user roles navigation options here -->
+
+          <li class="user-actions">
+            <a href="/reciepthistory" class="history-link">
+              <div class="icon-container">
+                <img src="/history.png" alt="History" />
+              </div>
+              <span class="history-text">History</span>
+            </a>
+          </li>
+          <li class="user-actions">
+            <a href="/shoppingcart" id="shopping-cart-link">
+              <div class="icon-container">
+                <img src="/shopping-cart.png" alt="Shopping Cart" />
+              </div>
+              <span class="cart-counter">0</span>
+            </a>
+          
+          </li>
+
+        <% } %>
+        <li><a href="/logout">Log out</a></li>
+      <% } else { %>
+        <li><a href="/login">Log in</a></li>
+        <li><a href="/signup" class="btn">Sign up</a></li>
+      <% } %>
+    </ul>
+  </nav>
+</body>
+</html>

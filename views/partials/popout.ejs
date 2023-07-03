@@ -1,0 +1,26 @@
+<div class="product-details-popout">
+    <div class="popout-content">
+      <span class="close">&times;</span>
+      <div class="product-details">
+        <img class="product-image" src="data:<%= product.image.contentType %>;base64,<%= product.image.data.toString('base64') %>" alt="Product Image">
+        <h2><%= product.product_name %></h2>
+        <% if (product.discounted_price && product.discounted_price < product.price && product.discounted_price > 0) { %>
+          <% if (product.previous_price) { %>
+            <p class="price discounted">
+              <s>₱ <%= product.previous_price.toFixed(2) %></s>
+            </p>
+          <% } %>
+          <p class="price">
+            ₱ <%= product.discounted_price.toFixed(2) %>
+          </p>
+        <% } else { %>
+          <p class="price">₱ <%= product.price.toFixed(2) %></p>
+        <% } %>
+        <p><%= product.description %></p>
+        <div class="add-to-cart">
+          <a href="#" class="btn btn-primary">Add to Cart</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  

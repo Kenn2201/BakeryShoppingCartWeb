@@ -1,0 +1,198 @@
+<%- include('partials/header'); -%>
+
+<style>
+  /* CSS Styles for Receipt History */
+  .receipt-history {
+    background-color: #f5f5f5;
+    padding: 20px;
+  }
+
+  .receipt-item {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+  }
+
+  .receipt-id {
+    margin-top: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .receipt-details p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .order-items-heading {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .order-items-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin-bottom: 0;
+  }
+
+  .order-item {
+    padding: 10px 0;
+    border-top: 1px solid #ccc;
+  }
+
+  .product-view {
+    display: flex;
+    align-items: center;
+  }
+
+  .product-image-container {
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 5px;
+  }
+
+  .product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-details {
+    margin-left: 20px;
+  }
+
+  .product-name {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .product-description {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .product-price {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .product-quantity {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .product-units {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .subtotal {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .overall-total-checkout-price {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .total-checkout-price {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #555;
+    font-weight: bold;
+  }
+
+  .back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+
+  .back-button:hover {
+    background-color: #555;
+  }
+
+  /* Add more custom CSS styles as needed */
+</style>
+
+<section class="receipt-history">
+  <h1>Receipt History</h1>
+
+  <% if (receipts.length > 0) { %>
+    <ul class="list-group receipt-list">
+      <% receipts.forEach((receipt, index) => { %>
+        <li class="list-group-item receipt-item">
+          <h3 class="receipt-id">Receipt <%= index + 1 %>: <%= receipt.receipt_id %></h3>
+          <div class="receipt-details">
+            <p>Order ID: <%= receipt.order_id %></p>
+            <p>Customer ID: <%= receipt.customer_id %></p>
+            <p>Customer Email: <%= receipt.customer_email %></p>
+            <p>Order Created At: <%= receipt.order_created_at %></p>
+            <% if (receipt.order_completed_at) { %>
+              <p>Order Completed At: <%= receipt.order_completed_at %></p>
+            <% } else { %>
+              <p>Order Completed At: N/A</p>
+            <% } %>
+          </div>
+          <h4 class="order-items-heading">Order Items:</h4>
+          <% if (receipt.order_items && receipt.order_items.length > 0) { %>
+            <ul class="list-group order-items-list">
+              <% let totalCheckoutPrice = 0; %>
+              <% receipt.order_items.forEach((item, itemIndex) => { %>
+                <% totalCheckoutPrice += item.overall_total_checkout_price; %>
+                <li class="list-group-item order-item">
+                  <h5>Item <%= itemIndex + 1 %></h5>
+                  <div class="product-view">
+                    <div class="product-image-container">
+                      <img class="product-image" src="data:<%= item.image.contentType %>;base64,<%= item.image.data.toString('base64') %>" alt="Product Image">
+                    </div>
+                    <div class="product-details">
+                      <h2 class="product-name"><%= item.product_name %></h2>
+                      <p class="product-description"><%= item.description %></p>
+                      <p class="product-price">Price: ₱ <%= item.price.toFixed(2) %></p>
+                      <p class="product-quantity">Quantity: <%= item.product_quantity %></p>
+                      <% if (item.units) { %>
+                        <p class="product-units">Units: <%= item.units %></p>
+                      <% } %>
+                      <p class="subtotal">Subtotal: <%= item.subtotal_per_unit_and_quantity.toFixed(2) %></p>
+                    </div>
+                  </div>
+                </li>
+              <% }) %>
+            </ul>
+            <p class="total-checkout-price">Total Price: ₱ <%= totalCheckoutPrice.toFixed(2) %></p>
+          <% } else { %>
+            <p class="no-order-items">No order items found.</p>
+          <% } %>
+          <a href="/reciepthistory" class="back-button">Back</a> <!-- Add the back button with a link to the previous page -->
+        </li>
+      <% }) %>
+    </ul>
+  <% } else { %>
+    <p class="no-purchases">No history of purchases.</p>
+  <% } %>
+</section>
+
+<%- include('partials/footer'); -%>

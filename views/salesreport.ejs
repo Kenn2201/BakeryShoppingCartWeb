@@ -1,0 +1,343 @@
+<!-- partials/header.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Report</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    /* Modal CSS */
+    .modal {
+      display: none; /* Hide the modal by default */
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .modal-image {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .modal-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .modal-item-name {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .modal-item-price {
+      margin-left: auto;
+    }
+
+    .order-modal-btn {
+      color: #007bff;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .order-modal-btn:hover {
+      color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<%- include('partials/header'); -%>
+
+<div class="container">
+  <h2 class="my-4">Sales Report</h2>
+  <% function calculateTotalSales(order) {
+    let totalSales = 0;
+  
+    if (order.cartItems && order.cartItems.length > 0) {
+      order.cartItems.forEach(item => {
+        const price = item.price || 0; // Set price to 0 if it is undefined or falsy
+        const quantity = item.quantity || 0; // Set quantity to 0 if it is undefined or falsy
+  
+        totalSales += price * quantity;
+      });
+    }
+  
+    return totalSales;
+  }
+  %>
+  
+  <% function formatOnlyDate(date) {
+    const formattedDate = new Date(date);
+    return formattedDate.toLocaleDateString();
+  } %>
+  
+  <% function formatOnlyTime(date) {
+    const formattedDate = new Date(date);
+    return formattedDate.toLocaleTimeString();
+  } %>
+  
+
+
+
+
+
+
+
+<div class="date-filter">
+  <label for="date-dropdown">Select Date:</label>
+  <select id="date-dropdown" onchange="filterOrdersByDate()">
+    <option value="">All Dates</option>
+    <% const uniqueDates = [...new Set(orders.map(order => formatOnlyDate(order.order_completed_at)))]; %>
+    <% uniqueDates.forEach(date => { %>
+      <option value="<%= date %>"><%= date %></option>
+    <% }) %>
+  </select>
+</div>
+
+<script>
+  // Function to filter orders by date
+  function filterOrdersByDate() {
+    const selectedDate = document.getElementById('date-dropdown').value;
+    const orderRows = document.querySelectorAll('.order-row');
+
+    orderRows.forEach(row => {
+      const rowDate = row.dataset.orderDate;
+
+      if (selectedDate === "" || rowDate === selectedDate) {
+        row.style.display = 'table-row';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+</script>
+
+
+  <!-- Processing Orders -->
+  <h4>Processing Orders</h4>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Customer Name</th>
+        <th>Email</th>
+        <th>Total Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% const processingOrders = orders.filter(order => order.isCompleted === 'processing'); %>
+      <% processingOrders.forEach(order => { %>
+        <tr class="order-row" data-order-date="<%= formatOnlyDate(order.order_completed_at) %>">
+        <tr>
+          <td>
+            <span class="order-modal-btn" data-order-id="<%= order._id %>"><%= order._id %></span>
+            <div class="modal" id="order-modal-<%= order._id %>">
+              <div class="modal-content">
+                <span class="close">&times;</span>
+                <h4>Order ID: <%= order._id %></h4>
+                <% order.cartItems.forEach(item => { %>
+                  <div class="modal-item">
+                    <div class="avatar">
+                      <img class="modal-image" src="data:<%= item.image.contentType %>;base64,<%= item.image.data.toString('base64') %>" alt="<%= item.product_name %>">
+                    </div>
+                    <div>
+                      <span class="modal-item-name"><%= item.product_name %></span>
+                      <span class="modal-item-price">₱<%= item.overall_total_checkout_price %> (Quantity: <%= item.product_quantity %>, Unit: <%= item.units %>)</span>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+          </td>
+          <td><%= order.user.customerName %></td>
+          <td><%= order.user.email %></td>
+          <td>₱<%= order.totalAmount %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  
+
+
+  <!-- Approved Orders -->
+<h4>Approved Orders</h4>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>Customer Name</th>
+      <th>Email</th>
+      <th>Total Amount</th>
+      <th>Approved Date</th>
+      <th>Approved Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% const approvedOrders = orders.filter(order => order.isCompleted === 'approved'); %>
+    <% approvedOrders.forEach(order => { %>
+      <tr class="order-row" data-order-date="<%= formatOnlyDate(order.order_completed_at) %>">
+        <td>
+          <span class="order-modal-btn" data-order-id="<%= order._id %>"><%= order._id %></span>
+          <div class="modal" id="order-modal-<%= order._id %>">
+            <div class="modal-content">
+              <span class="close">&times;</span>
+              <h4>Order ID: <%= order._id %></h4>
+              <% order.cartItems.forEach(item => { %>
+                <div class="modal-item">
+                  <div class="avatar">
+                    <img class="modal-image" src="data:<%= item.image.contentType %>;base64,<%= item.image.data.toString('base64') %>" alt="<%= item.product_name %>">
+                  </div>
+                  <div>
+                    <span class="modal-item-name"><%= item.product_name %></span>
+                    <span class="modal-item-price">₱<%= item.overall_total_checkout_price %> (Quantity: <%= item.product_quantity %>, Unit: <%= item.units %>)</span>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        </td>
+        <td><%= order.user.customerName %></td>
+        <td><%= order.user.email %></td>
+        <td>₱<%= order.totalAmount %></td>
+        <td><%= formatOnlyDate(order.order_completed_at) %></td>
+<td><%= formatOnlyTime(order.order_created_at) %></td>
+
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<!-- Cancelled Orders -->
+<!-- Cancelled Orders -->
+<h4>Cancelled Orders</h4>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>Customer Name</th>
+      <th>Email</th>
+      <th>Total Amount</th>
+      <th>Cancelled Date</th>
+      <th>Cancelled Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% const cancelledOrders = orders.filter(order => order.isCompleted === 'cancelled'); %>
+    <% cancelledOrders.forEach(order => { %>
+      <tr class="order-row" data-order-date="<%= formatOnlyDate(order.order_completed_at) %>">
+        <td>
+          <span class="order-modal-btn" data-order-id="<%= order._id %>"><%= order._id %></span>
+          <div class="modal" id="order-modal-<%= order._id %>">
+            <div class="modal-content">
+              <span class="close">&times;</span>
+              <h4>Order ID: <%= order._id %></h4>
+              <% order.cartItems.forEach(item => { %>
+                <div class="modal-item">
+                  <div class="avatar">
+                    <img class="modal-image" src="data:<%= item.image.contentType %>;base64,<%= item.image.data.toString('base64') %>" alt="<%= item.product_name %>">
+                  </div>
+                  <div>
+                    <span class="modal-item-name"><%= item.product_name %></span>
+                    <span class="modal-item-price">₱<%= item.overall_total_checkout_price %> (Quantity: <%= item.product_quantity %>, Unit: <%= item.units %>)</span>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        </td>
+        <td><%= order.user.customerName %></td>
+        <td><%= order.user.email %></td>
+        <td>₱<%= order.totalAmount %></td>
+        <td><%= formatOnlyDate(order.order_completed_at) %></td>
+<td><%= formatOnlyTime(order.order_created_at) %></td>
+
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+
+  <!-- Total Sales -->
+  <h4>Total Sales</h4>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Total Approved Sales</th>
+        <th>Total Processing Amount</th>
+        <th>Total Cancelled Sales</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <% let totalApprovedSales = 0; %>
+        <% let totalProcessingSales = 0; %>
+        <% let totalCancelledSales = 0; %>
+        <% approvedOrders.forEach(order => { %>
+          <% totalApprovedSales += order.totalAmount; %>
+        <% }) %>
+        <% processingOrders.forEach(order => { %>
+          <% totalProcessingSales += order.totalAmount; %>
+        <% }) %>
+        <% cancelledOrders.forEach(order => { %>
+          <% totalCancelledSales += order.totalAmount; %>
+        <% }) %>
+        <td>₱<%= totalApprovedSales %></td>
+        <td>₱<%= totalProcessingSales %></td>
+        <td>₱<%= totalCancelledSales %></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<%- include('partials/footer'); -%>
+
+<script>
+  // Modal JavaScript
+  const modalBtns = document.querySelectorAll('.order-modal-btn');
+  const closeBtns = document.querySelectorAll('.close');
+
+  modalBtns.forEach(btn => {
+    const orderId = btn.dataset.orderId;
+    const modal = document.getElementById(`order-modal-${orderId}`);
+    btn.addEventListener('click', () => {
+      modal.style.display = 'block';
+    });
+  });
+
+  closeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const modal = btn.parentElement.parentElement;
+      modal.style.display = 'none';
+    });
+  });
+</script>
+
+</body>
+</html>

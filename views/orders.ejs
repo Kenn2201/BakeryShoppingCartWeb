@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bakery Shop</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="custom.css">
+</head>
+<body>
+  <%- include('partials/header'); -%>
+  <div class="container">
+    <!-- Add a button to trigger the modal -->
+    <a href="/produts-salessummary" class="btn btn-primary">Sales Report</a>
+
+
+    
+    <h2 class="my-4">List of Processing Orders</h2>
+    <div class="row">
+      <% const processingOrders = orders.filter(order => order.isCompleted === 'processing'); %>
+      <% processingOrders.forEach((order, index) => { %>
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card d-flex flex-column" style="height: 100%;">
+            <div class="card-body flex-grow-1">
+              <h5 class="card-title">Order: <%= index + 1 %></h5>
+              <p class="card-text">From: <%= order.customer_info.customerName %> (<%= order.customer_info.email %>)</p>
+
+              <p class="card-text">Order ID: <%= order._id %></p>
+              <p class="card-text">
+                Status:
+                <% if (order.isCompleted === 'approved') { %>
+                  <span class="text-success">Approved</span>
+                <% } else if (order.isCompleted === 'cancelled') { %>
+                  <span class="text-danger">Cancelled</span>
+                <% } else { %>
+                  <span class="text-warning">Processing</span>
+                <% } %>
+              </p>
+              <hr>
+              <div class="order-details">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#orderDetails<%= index %>"
+                  aria-expanded="false" aria-controls="orderDetails<%= index %>">
+                  Show Details
+                </button>
+                <div class="collapse" id="orderDetails<%= index %>">
+                  <% let total = 0; %>
+                  <% order.cartItems.forEach(item => { %>
+                    <div class="product-info">
+                      <img src="data:<%= item.image.contentType %>;base64,<%= item.image.data.toString('base64') %>" class="product-img" alt="<%= item.product_name %>">
+                      <div>
+                        <p><strong><%= item.product_name %></strong></p>
+                        <p><span class="text-total">Quantity:</span> <%= item.product_quantity %></p>
+                        <p><span class="text-total">Subtotal:</span> ₱<%= item.subtotal_per_unit_and_quantity %></p>
+                      </div>
+                    </div>
+                    <% total += item.subtotal_per_unit_and_quantity; %>
+                  <% }) %>
+                  <hr>
+                  <p class="card-text">Total: ₱<%= total %></p>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer mt-auto">
+              <button type="button" class="btn btn-success" data-order-id-accept="<%= order._id %>" onclick="markAsPaid(this, 'approved')">Accept</button>
+              <button type="button" class="btn btn-danger" data-order-id-cancel="<%= order._id %>" onclick="markAsPaid(this, 'cancelled')">Cancel</button>
+
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+
+    <h2 class="my-4">List of Approved Orders</h2>
+    <div class="row">
+      <% const approvedOrders = orders.filter(order => order.isCompleted === 'approved'); %>
+      <% approvedOrders.forEach((order, index) => { %>
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card d-flex flex-column" style="height: 100%;">
+            <div class="card-body flex-grow-1">
+              <h5 class="card-title">Order: <%= index + 1 %></h5>
+              <p class="card-text">From: <%= order.customer_info.customerName %> (<%= order.customer_info.email %>)</p>
+
+              <p class="card-text">Order ID: <%= order._id %></p>
+              <p class="card-text">
+                Status:
+                <% if (order.isCompleted === 'approved') { %>
+                  <span class="text-success">Approved</span>
+                <% } else if (order.isCompleted === 'cancelled') { %>
+                  <span class="text-danger">Cancelled</span>
+                <% } else { %>
+                  <span class="text-warning">Processing</span>
+                <% } %>
+              </p>
+              
+              <hr>
+              <div class="order-details">
+                <div class="order-details">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#orderDetails<%= index %>" aria-expanded="false" aria-controls="orderDetails<%= index %>">
+                    Show Details
+                  </button>
+                  <div class="collapse" id="orderDetails<%= index %>">
+                    <% let total = 0; %>
+                    <% order.cartItems.forEach(item => { %>
+                      <div class="product-info">
+                        <img src="data:<%= item.image.contentType %>;base64,<%= item.image.data.toString('base64') %>" class="product-img" alt="<%= item.product_name %>">
+                        <div>
+                          <p><strong><%= item.product_name %></strong></p>
+                          <p><span class="text-total">Quantity:</span> <%= item.product_quantity %></p>
+                          <p><span class="text-total">Subtotal:</span> ₱<%= item.subtotal_per_unit_and_quantity %></p>
+                        </div>
+                      </div>
+                      <% total += item.subtotal_per_unit_and_quantity; %>
+                    <% }) %>
+                    <hr>
+                    <p class="card-text">Total: ₱<%= total %></p>
+                    <div class="card-footer mt-auto">
+                      <!-- Button for marking the order as paid -->
+                      <% if (order.isPaid === false) { %>
+                        <button class="btn btn-primary" onclick="markAsPaid('<%= order._id %>')">Mark as Paid</button>
+
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+                
+              </div>
+              
+            </div>
+            <div class="card-footer mt-auto">
+              <!-- Buttons for approving and cancelling the order -->
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+
+    <h2 class="my-4">List of Canceled Orders</h2>
+    <div class="row">
+      <% const cancelledOrders = orders.filter(order => order.isCompleted === 'cancelled'); %>
+      <% cancelledOrders.forEach((order, index) => { %>
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card d-flex flex-column" style="height: 100%;">
+            <div class="card-body flex-grow-1">
+              <h5 class="card-title">Order: <%= index + 1 %></h5>
+              <p class="card-text">From: <%= order.customer_info.customerName %> (<%= order.customer_info.email %>)</p>
+
+              <p class="card-text">Order ID: <%= order._id %></p>
+              <p class="card-text">
+                Status:
+                <% if (order.isCompleted === 'approved') { %>
+                  <span class="text-success">Approved</span>
+                  <% } else if (order.isCompleted === 'cancelled') { %>
+                    <span class="text-danger">Cancelled</span>
+                  <% } else { %>
+                    <span class="text-warning">Processing</span>
+                  <% } %>
+                </p>
+                <hr>
+                <div class="order-details">
+                  <div class="order-details">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#orderDetails<%= index %>" aria-expanded="false" aria-controls="orderDetails<%= index %>">
+                      Show Details
+                    </button>
+                    <div class="collapse" id="orderDetails<%= index %>">
+                      <% let total = 0; %>
+                      <% order.cartItems.forEach(item => { %>
+                        <div class="product-info">
+                          <img src="data:<%= item.image.contentType %>;base64,<%= item.image.data.toString('base64') %>" class="product-img" alt="<%= item.product_name %>">
+                          <div>
+                            <p><strong><%= item.product_name %></strong></p>
+                            <p><span class="text-total">Quantity:</span> <%= item.product_quantity %></p>
+                            <p><span class="text-total">Subtotal:</span> ₱<%= item.subtotal_per_unit_and_quantity %></p>
+                          </div>
+                        </div>
+                        <% total += item.subtotal_per_unit_and_quantity; %>
+                      <% }) %>
+                      <hr>
+                      <p class="card-text">Total: ₱<%= total %></p>
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+              <div class="card-footer mt-auto">
+                <!-- Buttons for approving and cancelling the order -->
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Retrieve sales data from the server
+        fetch('/produts-salessummary')
+          .then(response => response.json())
+          .then(data => displaySalesData(data));
+      });
+  
+      function displaySalesData(salesData) {
+  const salesTableBody = document.querySelector('#salesTable tbody');
+  salesTableBody.innerHTML = '';
+
+  let totalSales = 0;
+
+  salesData.forEach((order, index) => {
+    order.order_items.forEach((item, index) => {
+      const row = salesTableBody.insertRow();
+
+      const numberCell = row.insertCell();
+      numberCell.textContent = index + 1;
+
+      const orderIdCell = row.insertCell();
+      orderIdCell.textContent = order.order_id._id;
+      
+
+      const customerCell = row.insertCell();
+      customerCell.textContent = order.customer_email;
+
+      const createdAtCell = row.insertCell();
+      createdAtCell.textContent = order.order_created_at;
+
+      const completedAtCell = row.insertCell();
+      completedAtCell.textContent = order.order_completed_at;
+
+      const productNameCell = row.insertCell();
+      productNameCell.textContent = item.product_name;
+
+      const quantityCell = row.insertCell();
+      quantityCell.textContent = item.product_quantity;
+
+      const subtotalCell = row.insertCell();
+      subtotalCell.textContent = item.subtotal_per_unit_and_quantity;
+
+      const overallTotalCell = row.insertCell();
+      overallTotalCell.textContent = item.overall_total_checkout_price;
+
+      totalSales += parseFloat(item.overall_total_checkout_price);
+    });
+  });
+
+  const totalSalesElement = document.querySelector('#totalSales');
+  totalSalesElement.textContent = 'Total Sales: ₱' + totalSales.toFixed(2);
+}
+
+
+    </script>
+    
+    <script>
+      async function markAsPaid(orderId) {
+        try {
+          const response = await fetch('/products-orders', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              orderId,
+              status: 'approved',
+            }),
+          });
+    
+          if (response.ok) {
+            location.reload();
+          } else {
+            // Handle error, e.g. show an error message
+          }
+        } catch (error) {
+          console.error('Error marking order as paid:', error);
+        }
+      }
+    </script>
+    
+    
+
+    <script>
+      document.querySelectorAll('.btn-success').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const orderId = btn.getAttribute('data-order-id-accept');
+          updateOrderStatus(orderId, 'approved');
+        });
+      });
+    
+      document.querySelectorAll('.btn-danger').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const orderId = btn.getAttribute('data-order-id-cancel');
+    updateOrderStatus(orderId, 'cancelled');
+  });
+});
+
+    
+async function updateOrderStatus(orderId, status) {
+  const response = await fetch('/products-acceptpaid', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ orderId, status, isPaid: false }),
+  });
+  const result = await response.json();
+  if (result.success) {
+    location.reload();
+  } else {
+    alert('Error updating order status');
+  }
+}
+
+    </script>
+    <%- include('partials/footer'); -%>
+  
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    
+
+    <script src="custom.js"></script>
+  </body>
+  </html>
+  <style>
+    .product-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.product-img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  margin-right: 10px;
+}
+  </style>
+
+<style>
+  .modal-xl .modal-dialog {
+    max-width: 800px;
+    margin: 1.75rem auto;
+  }
+</style>
