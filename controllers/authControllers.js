@@ -13,11 +13,7 @@ const ShoppingCart = require('../models/CartItem');
 const { body, validationResult } = require('express-validator');
 
 const userModel = require('../models/User');
-<<<<<<< HEAD
 const Order = require('../models/Order');
-=======
-const Order = require('../models/order');
->>>>>>> origin/master
 const Product = require('../models/Products');
 const Receipt = require('../models/reciept');
 const nodemailer = require('nodemailer');
@@ -477,10 +473,6 @@ module.exports.productpage_get = async (req, res) => {
 };
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/master
 module.exports.view_product_get = async (req, res) => {
   try {
     const productId = req.params.productId; // Use params instead of query
@@ -491,11 +483,7 @@ module.exports.view_product_get = async (req, res) => {
       return res.render('error', { message: 'Product not found' });
     }
 
-<<<<<<< HEAD
     res.render('productview', { product , user: req.user});
-=======
-    res.render('productview', { product });
->>>>>>> origin/master
   } catch (err) {
     // Handle error
     console.log(err);
@@ -726,7 +714,6 @@ module.exports.updateQuantityShoppingCart = async (req, res) => {
 
 
 
-<<<<<<< HEAD
 module.exports.viewsellerorders = async (req, res) => {
   try {
     const orders = await Order.aggregate([
@@ -919,8 +906,6 @@ module.exports.approveprocessingorders = async (req, res) => {
 
 
 
-=======
->>>>>>> origin/master
 
 module.exports.createOrder = async (req, res) => {
   try {
