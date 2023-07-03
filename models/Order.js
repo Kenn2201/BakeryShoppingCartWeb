@@ -11,11 +11,15 @@ const orderSchema = new mongoose.Schema({
       type: Object,
       required: true,
     },
+<<<<<<< HEAD
     customer_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User', // Change this from 'Customer' to 'User'
       required: true,
     },
+=======
+    customer_id: { type: mongoose.Schema.Types.ObjectId, required: true },
+>>>>>>> origin/master
     product_id: {
       type: String,
       required: true,
@@ -54,6 +58,7 @@ const orderSchema = new mongoose.Schema({
     default: false,
   },
   isCompleted: {
+<<<<<<< HEAD
     type: String,
     enum: ['approved', 'processing', 'cancelled'],
     default: 'processing',
@@ -65,6 +70,10 @@ const orderSchema = new mongoose.Schema({
   order_completed_at: {
     type: Date,
     default: Date.now,
+=======
+    type: Boolean,
+    default: false,
+>>>>>>> origin/master
   },
   customer_id: {
     type: mongoose.Schema.Types.ObjectId,

@@ -53,7 +53,11 @@ nav li img {
 
 .btn{
   border-radius: 36px;
+<<<<<<< HEAD
   background: #ffc107;
+=======
+  background: #FEE996;
+>>>>>>> origin/master
 }
 form h2{
   font-size: 2.4em;
@@ -83,7 +87,11 @@ label{
 button{
   margin-top: 30px;
   border-radius: 36px;
+<<<<<<< HEAD
   background: #6c757d;
+=======
+  background: #FEE996;
+>>>>>>> origin/master
   border:0;
   text-transform: uppercase;
   font-weight: 700;
@@ -103,7 +111,11 @@ header{
   align-items: center;
 }
 .header-bg {
+<<<<<<< HEAD
   background-color: #f8f9fa;
+=======
+  background-color: #FCEDDA;
+>>>>>>> origin/master
 }
 
 header img{
@@ -181,6 +193,7 @@ footer{
 .history-text {
   margin-left: 5px;
 }
+<<<<<<< HEAD
 /* styles.css */
 body {
   font-family: Arial, sans-serif;
@@ -217,3 +230,5 @@ body {
 .table-striped tbody tr:nth-of-type(odd) {
   background-color: rgba(0, 0, 0, 0.05);
 }
+=======
+>>>>>>> origin/master

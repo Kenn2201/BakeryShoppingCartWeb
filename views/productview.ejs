@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 <%- include('partials/header',{ user: user }); -%>
+=======
+<%- include('partials/header'); -%>
+>>>>>>> origin/master
 
 <div class="product-view">
   <div class="product-image-container">
@@ -10,6 +14,7 @@
     <p class="product-price">Price: ₱ <%= product.price.toFixed(2) %> per <%= product.units %></p>
     <p class="product-quantity">Stock Available: <%= product.product_quantity %></p>
     
+<<<<<<< HEAD
     <% if (!user || user.role !== 'seller') { %>
       <div class="quantity-controls">
         <button class="btn btn-primary minus-btn">-</button>
@@ -24,6 +29,16 @@
       <% } else { %>
         <button class="btn btn-primary add-to-cart-btn" data-product-id="<%= product._id %>" data-product-quantity="<%= product.product_quantity %>">Add to Cart</button>
       <% } %>
+=======
+    <div class="quantity-controls">
+      <button class="btn btn-primary minus-btn">-</button>
+      <span class="quantity-label">1</span>
+      <button class="btn btn-primary plus-btn">+</button>
+    </div>
+    
+    <div class="add-to-cart">
+      <button class="btn btn-primary add-to-cart-btn" data-product-id="<%= product._id %>" data-product-quantity="<%= product.product_quantity %>">Add to Cart</button>
+>>>>>>> origin/master
 
     </div>
   </div>
@@ -39,6 +54,7 @@
 <%- include('partials/footer'); -%>
 
 <script>
+<<<<<<< HEAD
 
 const viewProductOrdersBtn = document.querySelector('.view-product-orders-btn');
 
@@ -49,6 +65,8 @@ if (viewProductOrdersBtn) {
   });
 }
 
+=======
+>>>>>>> origin/master
   // Get the quantity label element
 const quantityLabel = document.querySelector('.quantity-label');
 

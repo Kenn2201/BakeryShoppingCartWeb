@@ -11,10 +11,13 @@ router.route('/update-quantity-shoppingcart/:productId')
   .post(requireAuth, authControllers.updateQuantityShoppingCart);
 
 
+<<<<<<< HEAD
 router.route('/products-orders').get(requireAdminOrSeller,requireAuth,authControllers.viewsellerorders).post(authControllers.productordersaccpetorcancelled);
 router.route('/products-acceptpaid').post(requireAdminOrSeller,requireAuth,authControllers.approveprocessingorders);
 router.route('/produts-salessummary').get(requireAdminOrSeller,requireAuth,authControllers.getsaletotalreciept);
 
+=======
+>>>>>>> origin/master
 router.route('/create-order').post(requireAuth, authControllers.createOrder);
 router.route('/payment-page/:orderId').get(requireAuth, authControllers.payment_page_get);
 

@@ -96,6 +96,7 @@
         <li class="list-group-item receipt-item">
           <h3 class="receipt-id">Receipt <%= index + 1 %>: <%= receipt._id %></h3>
           <div class="receipt-details">
+<<<<<<< HEAD
             <% if (receipt.order_id) { %>
               <p class="order-id">Order ID: <%= receipt.order_id._id %></p>
             <% } else { %>
@@ -108,6 +109,11 @@
               <p class="customer-id">Customer ID: N/A</p>
               <p class="customer-email">Customer Email: N/A</p>
             <% } %>
+=======
+            <p class="order-id">Order ID: <%= receipt.order_id._id %></p>
+            <p class="customer-id">Customer ID: <%= receipt.customer_id._id %></p>
+            <p class="customer-email">Customer Email: <%= receipt.customer_id.email %></p>
+>>>>>>> origin/master
             <p class="order-created">Order Created At: <%= receipt.order_created_at %></p>
             <p class="order-completed">Order Completed At: <%= receipt.order_completed_at %></p>
           </div>
@@ -136,5 +142,8 @@
   <% } %>
 </section>
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 <%- include('partials/footer'); -%>
